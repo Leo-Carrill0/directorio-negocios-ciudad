@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directorio de mi Ciudad</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c3e50">
+    
+    <style>
+        body { font-family: sans-serif; margin: 0; background: #f4f4f4; text-align: center; }
+        header { background: #2c3e50; color: white; padding: 20px; }
+        .contenedor { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px; }
+        .card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-wa { background: #25d366; color: white; padding: 10px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Negocios de la Ciudad</h1>
+    <p>Directorio actualizado al 2026</p>
+</header>
+
+<div id="lista-negocios" class="contenedor">
+    <p>Cargando negocios...</p>
+</div>
+
+<script>
+    // 1. REGISTRO DE SERVICE WORKER PARA PWA
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+    }
+
+    // 2. CONEXIÓN A GOOGLE SHEETS
+    // REEMPLAZA ESTA URL POR LA QUE TE DIO GOOGLE APPS SCRIPT
+    const url_api = "TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI";
+
+    async function cargarNegocios() {
+        const respuesta = await fetch(url_api);
+        const datos = await respuesta.json();
+        const contenedor = document.getElementById('lista-negocios');
+        contenedor.innerHTML = ""; // Limpiar mensaje de carga
+
+        datos.forEach(negocio => {
+            contenedor.innerHTML += `
+                <div class="card">
+                    <img src="${negocio.imagen}" style="width:100%; border-radius:8px;">
+                    <h3>${negocio.nombre}</h3>
+                    <p><strong>${negocio.categoria}</strong></p>
+                    <p>${negocio.descripcion}</p>
+                    <a href="https://wa.me/${negocio.telefono}" class="btn-wa">Contactar por WhatsApp</a>
+                </div>
+            `;
+        });
+    }
+
+    cargarNegocios();
+</script>
+</body>
+</html>
